@@ -2,6 +2,9 @@
   hosts: www
   sudo: true
 
+  vars_files:
+  - private/passwords.yml
+
   roles:
   - common
   - nginx

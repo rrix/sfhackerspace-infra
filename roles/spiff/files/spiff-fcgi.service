@@ -1,0 +1,8 @@
+[Unit]
+Description="Spiff FCGI"
+Author="Ryan Rix + Torrie Fischer"
+
+[Service]
+ExecStartPre=source /srv/virtualenv/bin/activate;
+ExecStart=/srv/spiff/manage.py runfcgi method=prefork host=127.0.0.1 port=9002 daemonize=false
+User=apache

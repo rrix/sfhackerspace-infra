@@ -2,12 +2,21 @@
   command: touch /srv/spiff/spiff/wsgi.py
 
 - name: spiff migrate
-  shell: source /srv/virtualenv/bin/activate; /srv/spiff/manage.py migrate --merge
+  django_manage: command=migrate
+                 app_path=/srv/spiff/
+                 settings=spiff
+                 virtualenv=/srv/virtualenv
   delegate_to: www-0
 
 - name: spiff syncdb
-  shell: source /srv/virtualenv/bin/activate; /srv/spiff/manage.py syncdb --all --noinput
+  django_manage: command=syncdb
+                 app_path=/srv/spiff/
+                 settings=spiff
+                 virtualenv=/srv/virtualenv
   delegate_to: www-0
 
 - name: restart spiff fcgi
-  service: name=spiff-fcgi state=restarted
+  service: name=spiff-fcgi state=restarted enabled=yes
+
+- name: reload nginx
+  service: name=nginx state=reloaded

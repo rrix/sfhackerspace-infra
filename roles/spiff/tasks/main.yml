@@ -1,3 +1,15 @@
+- name: set up database
+  postgresql_db: name=spiff
+
+  # FIXME: only privs on this database? ensure.
+- name: create pgsql role
+  postgresql_user: db=spiff
+                   priv=ALL
+                   user=spiff
+                   password={{spiff_postgresql_password}}
+                   role_attr_flags=CREATEDB,NOSUPERUSER
+                   login_user=postgres
+
 - name: install Spiff deps
   yum: state=latest pkg=$item
   with_items:
@@ -7,7 +19,7 @@
     - python-psycopg2
     - python-devel
     - gcc
-
+    - git
 
 - name: deploy spiff
   git: repo=git://github.com/SYNHAK/spiff.git dest=/srv/spiff/ version=HEAD
@@ -22,26 +34,28 @@
   command: creates=/srv/virtualenv/bin/activate virtualenv /srv/virtualenv/
 
 - name: build spiff virtualenv
-  shell: source /srv/virtualenv/bin/activate; pip install -r /srv/spiff/pip-requirements
+  pip: requirements=/srv/spiff/pip-requirements virtualenv=/srv/virtualenv
 
-- name: install python-mysql to spiff virtualenv
-  shell: source /srv/virtualenv/bin/activate; pip install MySQL-python
+- name: install python-psycopg2 to spiff virtualenv
+  pip: name=psycopg2 virtualenv=/srv/virtualenv
 
 - name: install flup to spiff virtualenv
-  shell: source /srv/virtualenv/bin/activate; pip install flup
+  pip: name=flup virtualenv=/srv/virtualenv
 
 - name: configure spiff
-  template: src=../config/local_settings.py dest=/srv/spiff/spiff/local_settings.py
+  template: src=spiff-local_settings.py dest=/srv/spiff/spiff/local_settings.py
   notify:
   - reload wsgi
   - spiff syncdb
   - spiff migrate
 
-- name: install spiff FCGI upstart config
-  copy: src=../config/spiff-fcgi.conf dest=/etc/init/spiff-fcgi.conf
+- name: install spiff nginx snippet
+  template: src=spiff.conf dest=/etc/nginx/conf.d/default.conf
   notify:
-    - restart spiff fcgi
+  - reload nginx
 
-- name: enable spiff FCGI upstart config
-  service: name=spiff-fcgi state=started
+- name: install spiff FCGI systemd config
+  copy: src=spiff-fcgi.service dest=/etc/systemd/system/spiff-fcgi.service
+  notify:
+  - restart spiff fcgi
 
