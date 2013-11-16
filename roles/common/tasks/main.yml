@@ -1,0 +1,15 @@
+- name: install some shells
+  yum: state=installed pkg=$item
+  with_items:
+  - zsh
+  - bash
+  - tmux
+
+- name: copy in sudoers file
+  template: src=sudoers.in dest=/etc/sudoers.tmp
+
+- name: check and enable sudoers file
+  shell: visudo -q -c -f /etc/sudoers.tmp && cp /etc/sudoers.tmp /etc/sudoers
+
+- include: user.yml
+  with_items: $users

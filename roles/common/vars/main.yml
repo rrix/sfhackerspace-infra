@@ -1,0 +1,4 @@
+users:
+  - name: rrix
+    shell: /bin/zsh
+    allow_sudo: true

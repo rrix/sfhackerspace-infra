@@ -1,0 +1,2 @@
+[www]
+rs1.sfh ansible_ssh_host=162.242.172.185

@@ -1,0 +1,7 @@
+- name: Set up WWW server
+  hosts: www
+  sudo: true
+
+  roles:
+  - common
+

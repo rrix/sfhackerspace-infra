@@ -1,0 +1,30 @@
+# python -c 'import crypt; print crypt.crypt("password", "$1$changeme$")'
+- name: create user
+  user: name='{{item.name}}'
+        shell='{{item.shell}}'
+        password=$1$changeme$H8D3a0snS.6NFdoxMEU1G0
+        update_password=on_create
+  register: user_creation
+
+- name: warning
+  debug: msg="Please log in and change {{item.name}} s password."
+  when: "{{user_creation.changed}}"
+
+
+- name: allow user to have sudo
+  user: name='{{item.name}}'
+        groups=wheel
+        append=yes
+  when: "{{item.allow_sudo}} == true"
+
+- file: state=directory
+        path=/home/{{item.name}}/.ssh/
+        mode=0755
+
+- name: copy user's SSH key
+  copy: src={{item.name}}.keys
+        dest=/home/{{item.name}}/.ssh/authorized_keys
+        owner={{item.name}}
+        group={{item.name}}
+        mode=0700
+
