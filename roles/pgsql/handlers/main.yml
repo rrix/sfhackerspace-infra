@@ -1,0 +1,5 @@
+- name: start postgres
+  service: name=postgresql enabled=yes state=running
+
+- name: postgres initdb
+  command: creates=/var/lib/pgsql/ postgresql-setup initdb

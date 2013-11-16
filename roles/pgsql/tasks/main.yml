@@ -1,0 +1,10 @@
+- name: install packages
+  yum: state=installed pkg=$item
+  with_items:
+  - python-psycopg2
+  - postgresql
+  - postgresql-server
+  notify:
+  - postgres initdb
+  - start postgres
+
