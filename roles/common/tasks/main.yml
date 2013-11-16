@@ -5,11 +5,15 @@
   - bash
   - tmux
 
-- name: copy in sudoers file
-  template: src=sudoers.in dest=/etc/sudoers.tmp
+- name: install basic tools
+  yum: state=installed pkg=$item
+  with_items:
+  - vim-enhanced
+  - htop
+  - ksysguardd
 
-- name: check and enable sudoers file
-  shell: visudo -q -c -f /etc/sudoers.tmp && cp /etc/sudoers.tmp /etc/sudoers
+- name: copy in sudoers file
+  template: src=sudoers.in dest=/etc/sudoers.tmp validate='visudo -cf %s'
 
 - include: user.yml
   with_items: $users
