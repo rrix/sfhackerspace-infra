@@ -1,0 +1,13 @@
+- name: reload wsgi
+  command: touch /srv/spiff/spiff/wsgi.py
+
+- name: spiff migrate
+  shell: source /srv/virtualenv/bin/activate; /srv/spiff/manage.py migrate --merge
+  delegate_to: www-0
+
+- name: spiff syncdb
+  shell: source /srv/virtualenv/bin/activate; /srv/spiff/manage.py syncdb --all --noinput
+  delegate_to: www-0
+
+- name: restart spiff fcgi
+  service: name=spiff-fcgi state=restarted

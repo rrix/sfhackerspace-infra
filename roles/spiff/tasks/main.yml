@@ -1,0 +1,47 @@
+- name: install Spiff deps
+  yum: state=latest pkg=$item
+  with_items:
+    - python-pip
+    - python-virtualenv
+    - postgresql-devel
+    - python-psycopg2
+    - python-devel
+    - gcc
+
+
+- name: deploy spiff
+  git: repo=git://github.com/SYNHAK/spiff.git dest=/srv/spiff/ version=HEAD
+  notify:
+  - reload wsgi
+  - spiff syncdb
+  - spiff migrate
+  tags:
+  - quick
+
+- name: create spiff virtualenv
+  command: creates=/srv/virtualenv/bin/activate virtualenv /srv/virtualenv/
+
+- name: build spiff virtualenv
+  shell: source /srv/virtualenv/bin/activate; pip install -r /srv/spiff/pip-requirements
+
+- name: install python-mysql to spiff virtualenv
+  shell: source /srv/virtualenv/bin/activate; pip install MySQL-python
+
+- name: install flup to spiff virtualenv
+  shell: source /srv/virtualenv/bin/activate; pip install flup
+
+- name: configure spiff
+  template: src=../config/local_settings.py dest=/srv/spiff/spiff/local_settings.py
+  notify:
+  - reload wsgi
+  - spiff syncdb
+  - spiff migrate
+
+- name: install spiff FCGI upstart config
+  copy: src=../config/spiff-fcgi.conf dest=/etc/init/spiff-fcgi.conf
+  notify:
+    - restart spiff fcgi
+
+- name: enable spiff FCGI upstart config
+  service: name=spiff-fcgi state=started
+
