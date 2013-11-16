@@ -1,0 +1,33 @@
+- name: install nginx and dependencies
+  yum: state=latest pkg=$item
+  with_items:
+  - python-psycopg
+  - mod_wsgi
+  - nginx
+
+- name: Configure selinux
+  seboolean: persistent=yes name=httpd_can_network_connect state=true
+  ignore_errors: True
+
+- name: Create nginx directory
+  file: state=directory path=/srv/web
+
+- name: Ensure nginx is enabled
+  service: name=nginx state=started
+
+#- name: Install SSL certificate
+#  copy: src=private/ssl.crt dest=/etc/pki/tls/certs/ssl.crt
+#  notify:
+#    - reload nginx
+#
+#- name: Install SSL key
+#  copy: src=private/ssl.key dest=/etc/pki/tls/private/ssl.key
+#  notify:
+#    - reload nginx
+
+- name: Update general nginx configuration
+  template: src=nginx.conf dest=/etc/nginx/nginx.conf
+  notify:
+    - reload nginx
+  tags:
+    - reconfigure
