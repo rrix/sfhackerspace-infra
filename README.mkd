@@ -1,0 +1,30 @@
+SFHackerspace Infrastructure
+============================
+
+```
+ _______________________________________ 
+/ Ansible playbooks for taking over the \
+\ world.                                /
+ --------------------------------------- 
+        \   ^__^
+         \  (oo)\_______
+            (__)\       )\/\
+                ||----w |
+                ||     ||
+```
+
+Creating a new user
+-------------------
+
+1. Add user to ``roles/common/vars/main.yml``, fill in with cool stuff about
+   that user.
+2. Run ``ansible-playbook -i inventory www.yml -K``; enter your sudo password
+3. User logs in and changes their password from the default of ``password``.
+   This is due to sudo requiring a password even if one is not set on the
+   user.
+
+Creating a new user
+-------------------
+
+1. Add server to inventory
+2. Run ``ansible-playbook -i inventory www.yml``
