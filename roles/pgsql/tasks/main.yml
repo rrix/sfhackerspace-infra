@@ -8,3 +8,7 @@
   - postgres initdb
   - start postgres
 
+- name: set up pg_hba.conf
+  copy: src=base-pg_hba.conf dest=/var/lib/pgsql/data/pg_hba.conf backup=yes
+  notify:
+  - start postgres
