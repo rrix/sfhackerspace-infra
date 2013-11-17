@@ -8,3 +8,5 @@ DATABASES = {
         'PORT': '',
     }
 }
+
+STRIPE_KEY = '{{stripe_key}}'
