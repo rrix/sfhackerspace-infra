@@ -43,7 +43,11 @@
   pip: name=flup virtualenv=/srv/virtualenv
 
 - name: configure spiff
-  template: src=spiff-local_settings.py dest=/srv/spiff/spiff/local_settings.py
+  template: src=spiff-local_settings.py
+            dest=/srv/spiff/spiff/local_settings.py
+            owner=root
+            group=root
+            mode=0755
   notify:
   - reload wsgi
   - spiff syncdb
