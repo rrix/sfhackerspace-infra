@@ -1,0 +1,5 @@
+- name: reload nginx
+  service: name=nginx state=reloaded
+
+- name: restart gollum
+  service: name=gollum state=restarted

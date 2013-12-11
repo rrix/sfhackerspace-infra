@@ -1,0 +1,41 @@
+- name: install build deps for gollum
+  yum: state=installed name={{item}}
+  with_items:
+  - '@development-tools'
+  - gcc-c++
+  - libicu
+  - libicu-devel
+  - icu
+
+- name: install gollum
+  gem: state=present name=gollum
+
+- name: install rendering dependencies
+  gem: state=present name={{item}}
+  with_items:
+  - redcarpet
+
+- name: create gollum data dir
+  git: dest=/var/lib/gollum/ repo=https://github.com/nortonimperiallabs/wiki.git update=yes
+
+- name: set up post-commit hook
+  fail: msg='This needs SSH key for push set up first! Run deploy script manually for now to update repo...'
+  # copy: src=post-commit.sh dest=/var/lib/gollum/.git/hooks/post-commit mode=0755
+  ignore_errors: true
+
+- name: set cronjob to fetch the repo every so often
+  fail: msg='This needs SSH key for push set up first! Run deploy script manually for now to update repo...'
+  # cron: minute=*/30 name='Update web copy of repo' state=present user=root
+  ignore_errors: true
+
+- name: install gollum systemd service
+  copy: src=gollum.service dest=/etc/systemd/system/gollum.service
+
+- name: install gollum config
+  copy: src=gollum.rb dest=/etc/gollum.rb
+  notify: restart gollum
+
+- name: install nginx reverse proxy configuration
+  template: src=nginx.conf dest=/etc/nginx/conf.d/gollum.conf
+  notify: reload nginx
+
