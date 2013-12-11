@@ -1,12 +1,12 @@
 - name: install some shells
-  yum: state=installed pkg=$item
+  yum: state=installed pkg={{item}}
   with_items:
   - zsh
   - bash
   - tmux
 
 - name: install basic tools
-  yum: state=installed pkg=$item
+  yum: state=installed pkg={{item}}
   with_items:
   - vim-enhanced
   - htop

@@ -1,5 +1,5 @@
 - name: install nginx and dependencies
-  yum: state=latest pkg=$item
+  yum: state=latest pkg={{item}}
   with_items:
   - python-psycopg
   - mod_wsgi
