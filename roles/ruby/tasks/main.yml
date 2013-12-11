@@ -2,4 +2,5 @@
   yum: state=installed name=$item
   with_items:
   - ruby
+  - ruby-devel
   - rubygems
