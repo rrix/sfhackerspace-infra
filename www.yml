@@ -6,9 +6,7 @@
   - yum: state=installed name=python-keyczar
 
 - name: Set up WWW server
-  # Enable this when we don't have to NOPASSWD
-  # http://www.ansibleworks.com/docs/playbooks_acceleration.html
-  # accelerate: true
+  accelerate: true
   hosts: www
   sudo: true
 
