@@ -16,7 +16,7 @@
   - redcarpet
 
 - name: create gollum data dir
-  git: dest=/var/lib/gollum/ repo=https://github.com/nortonimperiallabs/wiki.git update=yes
+  git: dest=/var/lib/gollum/ repo=https://github.com/nortonimperiallabs/nortonimperiallabs.wiki update=yes
 
 - name: set up post-commit hook
   fail: msg='This needs SSH key for push set up first! Run deploy script manually for now to update repo...'
