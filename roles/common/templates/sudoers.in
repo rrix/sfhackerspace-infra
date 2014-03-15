@@ -1,5 +1,3 @@
-Defaults    requiretty
-
 Defaults    env_reset
 Defaults    env_keep =  "COLORS DISPLAY HOSTNAME HISTSIZE INPUTRC KDEDIR LS_COLORS"
 Defaults    env_keep += "MAIL PS1 PS2 QTDIR USERNAME LANG LC_ADDRESS LC_CTYPE"
@@ -11,4 +9,4 @@ Defaults    secure_path = /sbin:/bin:/usr/sbin:/usr/bin
 
 root    ALL=(ALL)       ALL
 
-%wheel  ALL=(ALL)       ALL
+%wheel  ALL=(ALL)       NOPASSWD: ALL

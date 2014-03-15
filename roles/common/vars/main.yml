@@ -2,3 +2,8 @@ users:
   - name: rrix
     shell: /bin/zsh
     allow_sudo: true
+    uid: 1000
+  - name: flamsmark
+    shell: /bin/zsh
+    allow_sudo: true
+    uid: 8665
