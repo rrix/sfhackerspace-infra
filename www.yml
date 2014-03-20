@@ -20,6 +20,7 @@
   - pgsql
   - python
   - ruby
+  - discourse #requires common, nginx, pgsql
   - spiff  # requires common, nginx, pgsql
   - gollum # requires common, nginx
 
