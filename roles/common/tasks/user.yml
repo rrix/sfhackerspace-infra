@@ -5,16 +5,19 @@
         update_password=on_create
         uid='{{item.uid}}'
   register: user_creation
+  with_items: $users
 
 - name: allow user to have sudo
   user: name='{{item.name}}'
         groups=wheel
         append=yes
   when: "{{item.allow_sudo}} == true"
+  with_items: $users
 
 - file: state=directory
         path=/home/{{item.name}}/.ssh/
-        mode=0700 owner={{item.name}} group={{item.name}}
+        mode=0755
+  with_items: $users
 
 - name: copy user's SSH key
   copy: src={{item.name}}.keys
@@ -22,4 +25,5 @@
         owner={{item.name}}
         group={{item.name}}
         mode=0700
+  with_items: $users
 
