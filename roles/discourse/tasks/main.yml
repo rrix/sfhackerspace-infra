@@ -1,0 +1,49 @@
+- name: create discourse user
+  user: name=discourse
+        home=/var/lib/discourse
+        createhome=yes
+        shell=/sbin/nologin
+        groups=wheel
+        uid=30001
+
+- name: install requisit packages
+  yum: state=installed name={{item}}
+  with_items:
+  - redis
+  - ruby
+  - rubygem-bundler
+  - openssl-devel
+
+- name: enable redis
+  service: name=redis state=running enabled=yes
+
+- name: set up database
+  postgresql_db: name=discourse
+
+  # FIXME: only privs on this database? ensure.
+- name: create pgsql role
+  postgresql_user: db=discourse
+                   priv=ALL
+                   user=discourse
+                   password={{discourse_postgresql_password}}
+                   role_attr_flags=CREATEDB,NOSUPERUSER
+                   login_user=postgres
+
+- name: clone down Discourse repository
+  git: repo=https://github.com/discourse/discourse.git
+       dest=/var/lib/discourse/app/
+       version=v0.9.8.10
+       update=yes
+
+- name: bundle
+  shell: chdir=/var/lib/discourse/app/ bundle install --deployment --without test
+
+#- name: install configuration files
+#  template: src={{item}} dest=/var/lib/discourse/app/config/{{item}}
+#  with_items:
+#  - discourse.conf
+#  - redis.yml
+#  - discourse.pill
+#
+#- name: install production environment config
+#  template: src=production.rb dest=/var/lib/discourse/app/config/production.rb
