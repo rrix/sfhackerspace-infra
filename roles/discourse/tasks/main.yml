@@ -38,12 +38,12 @@
 - name: bundle
   shell: chdir=/var/lib/discourse/app/ bundle install --deployment --without test
 
-#- name: install configuration files
-#  template: src={{item}} dest=/var/lib/discourse/app/config/{{item}}
-#  with_items:
-#  - discourse.conf
-#  - redis.yml
-#  - discourse.pill
-#
-#- name: install production environment config
-#  template: src=production.rb dest=/var/lib/discourse/app/config/environments/production.rb
+- name: install configuration files
+  template: src={{item}} dest=/var/lib/discourse/app/config/{{item}}
+  with_items:
+  - discourse.conf
+  - redis.yml
+  - discourse.pill
+
+- name: install production environment config
+  template: src=production.rb dest=/var/lib/discourse/app/config/environments/production.rb
