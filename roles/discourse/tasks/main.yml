@@ -46,4 +46,4 @@
 #  - discourse.pill
 #
 #- name: install production environment config
-#  template: src=production.rb dest=/var/lib/discourse/app/config/production.rb
+#  template: src=production.rb dest=/var/lib/discourse/app/config/environments/production.rb
