@@ -77,3 +77,10 @@
     chdir=/var/lib/discourse
     creates=/var/run/bluepill/pids/discourse.pid
     /usr/local/bin/bluepill start app/config/discourse.pill
+
+- name: install nginx conf
+  notify: reload nginx
+  template:
+    src: nginx.conf
+    dest: /etc/nginx/conf.d/discourse.conf
+
