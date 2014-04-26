@@ -4,6 +4,7 @@
   - python-psycopg2
   - postgresql
   - postgresql-server
+  - postgresql-contrib
   notify:
   - postgres initdb
   - start postgres

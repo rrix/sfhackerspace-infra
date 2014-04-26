@@ -1,38 +1,23 @@
 rails_env   = ENV['RAILS_ENV']  || "production"
-rails_root  = ENV['RAILS_ROOT'] || "/var/rails/my_discourse"
+rails_root  = ENV['RAILS_ROOT'] || "/var/lib/discourse/app"
 
-user = ENV["DISCOURSE_USER"] || ENV['USER'] || 'user_running_app'
-group = ENV["DISCOURSE_GROUP"] || ENV['GROUP'] || 'www-data'
+user = ENV["DISCOURSE_USER"] || ENV['USER'] || 'discourse'
+group = ENV["DISCOURSE_GROUP"] || ENV['GROUP'] || 'discourse'
 num_webs = ENV["NUM_WEBS"].to_i > 0 ? ENV["NUM_WEBS"].to_i : 4
 
 # to debug use
-#Bluepill.application("your_app", :foreground => true) do |app|
+#Bluepill.application("discourse", :foreground => true) do |app|
 
 # Running bluepill as a user? Use:
-Bluepill.application("discourse", :base_dir => ENV["HOME"] + '/.bluepill') do |app|
+# Bluepill.application("discourse", :base_dir => ENV["HOME"] + '/.bluepill') do |app|
 
 # Running bluepill as root? Use:
-#Bluepill.application("discourse") do |app|
+Bluepill.application("discourse") do |app|
 
-  # getting this to work was a nightmare
-  # bundle exec spawns a process totally messing with the demonize option
-  # so we suck the environment out and set it up first
-  bootup_bundle = [ "#{ENV['HOME']}/.rvm/bin/rvm/bootup_bundle",
-                    "/usr/local/rvm/bin/rvm/bootup_bundle",
-                    `which bootup_bundle`.strip,
-                  ].each do |location|
-    if File.exist? location
-      break location
-    end
-  end
-  # XXX if none match, bootup_bundle is set to the array
-
-  if bootup_bundle
-    app.environment = `env -i BUNDLE_GEMFILE=#{rails_root}/Gemfile #{bootup_bundle} exec env`.lines.inject({}) do |env_hash,l|
-      kv = l.chomp.split('=',2)
-      env_hash[kv[0]] = kv[1]
-      env_hash
-    end
+  app.environment = `env -i BUNDLE_GEMFILE=#{rails_root}/Gemfile bundle exec env`.lines.inject({}) do |env_hash,l|
+    kv = l.chomp.split('=',2)
+    env_hash[kv[0]] = kv[1]
+    env_hash
   end
 
   app.environment ||= {}

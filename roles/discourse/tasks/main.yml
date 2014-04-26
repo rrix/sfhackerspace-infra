@@ -14,13 +14,17 @@
   - rubygem-bundler
   - openssl-devel
 
+- name: install gems
+  gem: state=present user_install=no name={{item}}
+  with_items:
+  - bluepill
+
 - name: enable redis
   service: name=redis state=running enabled=yes
 
 - name: set up database
   postgresql_db: name=discourse
 
-  # FIXME: only privs on this database? ensure.
 - name: create pgsql role
   postgresql_user: db=discourse
                    priv=ALL
@@ -28,6 +32,13 @@
                    password={{discourse_postgresql_password}}
                    role_attr_flags=CREATEDB,NOSUPERUSER
                    login_user=postgres
+
+- name: Load extensions
+  shell: "/bin/psql -d discourse -c \"CREATE EXTENSION IF NOT EXISTS {{item}}\""
+  sudo_user: postgres
+  with_items:
+    - pg_trgm
+    - hstore
 
 - name: clone down Discourse repository
   git: repo=https://github.com/discourse/discourse.git
@@ -47,3 +58,22 @@
 
 - name: install production environment config
   template: src=production.rb dest=/var/lib/discourse/app/config/environments/production.rb
+
+- name: Migrate database
+  shell: >
+    chdir=/var/lib/discourse/app/
+    bin/rake db:migrate RAILS_ENV=production 
+  sudo: yes
+  sudo_user: discourse
+
+- name: load the pill
+  shell: >
+    chdir=/var/lib/discourse
+    creates=/var/run/bluepill/socks/discourse.sock
+    /usr/local/bin/bluepill load app/config/discourse.pill
+
+- name: start the pill
+  shell: >
+    chdir=/var/lib/discourse
+    creates=/var/run/bluepill/pids/discourse.pid
+    /usr/local/bin/bluepill start app/config/discourse.pill
