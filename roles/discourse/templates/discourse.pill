@@ -3,16 +3,16 @@ rails_root  = ENV['RAILS_ROOT'] || "/var/lib/discourse/app"
 
 user = ENV["DISCOURSE_USER"] || ENV['USER'] || 'discourse'
 group = ENV["DISCOURSE_GROUP"] || ENV['GROUP'] || 'discourse'
-num_webs = ENV["NUM_WEBS"].to_i > 0 ? ENV["NUM_WEBS"].to_i : 4
+num_webs = ENV["NUM_WEBS"].to_i > 0 ? ENV["NUM_WEBS"].to_i : 2
 
 # to debug use
 #Bluepill.application("discourse", :foreground => true) do |app|
 
 # Running bluepill as a user? Use:
-# Bluepill.application("discourse", :base_dir => ENV["HOME"] + '/.bluepill') do |app|
+Bluepill.application("discourse", :base_dir => ENV["HOME"] + '/.bluepill') do |app|
 
 # Running bluepill as root? Use:
-Bluepill.application("discourse") do |app|
+# Bluepill.application("discourse") do |app|
 
   app.environment = `env -i BUNDLE_GEMFILE=#{rails_root}/Gemfile bundle exec env`.lines.inject({}) do |env_hash,l|
     kv = l.chomp.split('=',2)
@@ -70,28 +70,6 @@ Bluepill.application("discourse") do |app|
       process.checks :mem_usage, :every => 1.minutes, :below => 750.megabytes, :times => [3, 5]
     end
   end
-
-  # You can use Puma as WebServer as well, please use the scripts below.
-  #app.process("puma") do |process|
-  #  process.start_command  = "puma -e production -C #{rails_root}/config/puma.rb"
-  #
-  #    # Puma's Setting file is located in config/puma.rb, if you want to edit them, go to puma.rb.
-  #    # the upstream section in the nginx config to match.
-  #    # The nginx.sample.conf file assumes you're using sockets.
-  #    
-  #  process.pid_file = "#{rails_root}/tmp/pids/puma.pid"
-  #  process.start_grace_time = 30.seconds
-  #  process.stop_grace_time = 10.seconds
-  #  process.restart_grace_time = 10.seconds
-  #  process.group = "pumas"
-  #  process.uid = user
-  #  process.gid = group
-  #  process.daemonize = false
-  #  process.stdout = process.stderr = "#{rails_root}/log/puma.log"
-  #    # Thanks to: http://www.garrensmith.com/2012/09/24/Staying-up-with-Unicorn-Upstart-Bluepill.html
-  #    # If the amount of memory is exceeded 3 times out of 5, restart
-  #  process.checks :mem_usage, :every => 1.minutes, :below => 750.megabytes, :times => [3, 5]
-  #end
 
 #debug instance
 #    app.process("thin-debug") do |process|
