@@ -6,6 +6,12 @@
         groups=wheel
         uid=30001
 
+- name: make sure home dir is executable for non-discourse user
+  file:
+    state: directory
+    mode: 0711
+    path: /var/lib/discourse
+
 - name: install requisit packages
   yum: state=installed name={{item}}
   with_items:
@@ -63,7 +69,6 @@
   shell: >
     chdir=/var/lib/discourse/app/
     bin/rake db:migrate RAILS_ENV=production 
-  sudo: yes
   sudo_user: discourse
 
 - name: load the pill
@@ -71,12 +76,14 @@
     chdir=/var/lib/discourse
     creates=/var/run/bluepill/socks/discourse.sock
     /usr/local/bin/bluepill load app/config/discourse.pill
+  sudo_user: discourse
 
 - name: start the pill
   shell: >
     chdir=/var/lib/discourse
     creates=/var/run/bluepill/pids/discourse.pid
     /usr/local/bin/bluepill start app/config/discourse.pill
+  sudo_user: discourse
 
 - name: install nginx conf
   notify: reload nginx
