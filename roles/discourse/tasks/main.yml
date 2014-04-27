@@ -19,6 +19,7 @@
   - ruby
   - rubygem-bundler
   - openssl-devel
+  - ImageMagick
 
 - name: install gems
   gem: state=present user_install=no name={{item}}
@@ -49,7 +50,7 @@
 - name: clone down Discourse repository
   git: repo=https://github.com/discourse/discourse.git
        dest=/var/lib/discourse/app/
-       version=v0.9.8.10
+       version={{discourse_version}}
        update=yes
 
 - name: bundle
@@ -71,18 +72,23 @@
     bin/rake db:migrate RAILS_ENV=production 
   sudo_user: discourse
 
+- name: precompile assets
+  shell: >
+    chdir=/var/lib/discourse/app
+    bin/rake assets:precompile RAILS_ENV=production
+
 - name: load the pill
   shell: >
     chdir=/var/lib/discourse
     creates=/var/run/bluepill/socks/discourse.sock
-    /usr/local/bin/bluepill load app/config/discourse.pill
+    /usr/local/bin/bluepill --no-privileged load app/config/discourse.pill
   sudo_user: discourse
 
 - name: start the pill
   shell: >
     chdir=/var/lib/discourse
     creates=/var/run/bluepill/pids/discourse.pid
-    /usr/local/bin/bluepill start app/config/discourse.pill
+    /usr/local/bin/bluepill --no-privileged start app/config/discourse.pill
   sudo_user: discourse
 
 - name: install nginx conf

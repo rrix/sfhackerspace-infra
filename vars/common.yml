@@ -1,1 +1,5 @@
 root_domain: nortonimperiallabs.org
+infra_administrative_contacts: ry@n.rix.si, me@tomlowenthal.com
+
+discourse_hostname: "discussion.{{root_domain}}"
+discourse_developer_emails: "{{infra_administrative_contacts}}"
