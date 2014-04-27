@@ -6,3 +6,6 @@ Author="Ryan Rix"
 ExecStart=/usr/local/share/gems/gems/gollum-2.5.2/bin/gollum --config /etc/gollum.rb
 WorkingDirectory=/var/lib/gollum/
 User=root
+
+[Install]
+WantedBy=multi-user.target
