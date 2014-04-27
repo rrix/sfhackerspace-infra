@@ -1,5 +1,5 @@
 - name: install ruby
-  yum: state=installed name=$item
+  yum: state=installed name={{item}}
   with_items:
   - ruby
   - ruby-devel

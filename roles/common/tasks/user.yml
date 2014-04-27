@@ -11,7 +11,7 @@
   user: name='{{item.name}}'
         groups=wheel
         append=yes
-  when: "{{item.allow_sudo}} == true"
+  when: item.allow_sudo == true
   with_items: $users
 
 - file: state=directory

@@ -1,5 +1,5 @@
 - name: install packages
-  yum: state=installed pkg=$item
+  yum: state=installed pkg={{item}}
   with_items:
   - python-psycopg2
   - postgresql
