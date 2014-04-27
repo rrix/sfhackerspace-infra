@@ -9,7 +9,7 @@
 
 - name: warning
   debug: msg="Please log in and change {{item.name}} s password."
-  when: "{{user_creation.changed}}"
+  when: user_creation.changed
   with_items: $users
 
 
@@ -17,7 +17,7 @@
   user: name='{{item.name}}'
         groups=wheel
         append=yes
-  when: "{{item.allow_sudo}} == true"
+  when: item.allow_sudo == true
   with_items: $users
 
 - file: state=directory

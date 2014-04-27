@@ -1,5 +1,5 @@
 - name: install python
-  yum: state=installed pkg=$item
+  yum: state=installed pkg={{item}}
   with_items:
   - python
   - python-pip
