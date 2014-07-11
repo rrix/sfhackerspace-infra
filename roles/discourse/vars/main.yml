@@ -3,8 +3,8 @@ discourse_smtp_address: smtp.mandrillapp.com
 discourse_smtp_port: 587
 discourse_smtp_user_name: CHANGE
 discourse_smtp_password: CHANGE
-discourse_hostname: CHANGE 
+discourse_hostname: CHANGE
 
 discourse_developer_emails: ry@n.rix.si, me@tomlowenthal.com
 
-discourse_version: v0.9.9.5
+discourse_version: v0.9.9.12
